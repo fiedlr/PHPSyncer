@@ -1,5 +1,5 @@
 <?php
-/* PHPSyncer v0.1.1 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
+/* PHPSyncer v0.1.2 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
 
 require_once "PHPSyncer.class.php";
 
@@ -21,7 +21,7 @@ try
 
 	$r = $sync->apply();
 
-	if ($r) 
+	if (!empty($r)) 
 	{
 		$endingTime = microtime();
 		
@@ -30,9 +30,9 @@ try
 		// Show the changes
 		var_dump($r);
 	} else {
-		echo "<p>Unknown error occured.</p>";
+		echo "<p>No matches.</p>";
 	}
-} 
+}
 catch (Exception $e) 
 {
 	echo $e->getMessage();	
