@@ -81,9 +81,9 @@ class PHPSyncer
 		return $data;
 	}
 
-	public function extract($mapFile == null)
+	public function extract($mapFile = null)
 	{
-		if (!is_string($mapFile)) 
+		if ($mapFile !== null && !is_string($mapFile)) 
 		{
 			throw new Exception('$mapFile must be of type string.', 1);
 		}
