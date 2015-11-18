@@ -1,5 +1,5 @@
 <?php
-/* PHPSyncer v0.1.0 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
+/* PHPSyncer v0.1.1 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
 
 require_once "PHPSyncer.class.php";
 

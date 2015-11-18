@@ -1,10 +1,10 @@
 <?php
-/* PHPSyncer v0.1.0 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
+/* PHPSyncer v0.1.1 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
 
 class PHPSyncer
 {
 	// Settable attributes
-	private $source, $target;
+	private $pattern, $source, $target;
 
 	// Inner data
 	private $map;
@@ -17,7 +17,7 @@ class PHPSyncer
 		$this->target = $target;
 	}
 
-	private function loop(RecursiveDirectoryIterator $src, $pos = 0)
+	private function loop(RecursiveDirectoryIterator $src)
 	{
 		$map = array();
 
@@ -52,7 +52,8 @@ class PHPSyncer
 							{
 								if ($n == 1)
 								{
-									$endpos = $y; break;
+									$endpos = $y; 
+									break;
 								} 
 								else
 								$n--;
@@ -93,14 +94,19 @@ class PHPSyncer
 
 	private function saveTo($file, $content)
 	{
-		// Open the map file
-		$fileHandler = fopen($file, "w");
+		$status = false;
 
-		// Insert the map
-		$status = fwrite($fileHandler, $content);
+		if (is_file($file)) 
+		{
+			// Open the map file
+			$fileHandler = fopen($file, "w");
 
-		// Close the file
-		fclose($fileHandler);
+			// Insert the map
+			$status = fwrite($fileHandler, $content);
+
+			// Close the file
+			fclose($fileHandler);
+		}
 
 		return $status;
 	}
@@ -110,7 +116,7 @@ class PHPSyncer
 		return $this->saveTo($mapFile, json_encode($this->map));
 	}
 
-	private function decodeMap($mapFile)
+	public function decodeMap($mapFile)
 	{
 		return json_decode(file_get_contents($mapFile), true);
 	}
@@ -119,12 +125,14 @@ class PHPSyncer
 	{
 		$result = array();
 
+		// Loop through map
 		foreach ($this->map as $fileName => $file)
 		{
 			// Get content 
 			$originalString = file_get_contents($this->target->key().$fileName);
 			$replacedString = $originalString;
 
+			// Replace each match
 			foreach ($file as $filePath => $patch)
 			{
 				$replacedString = str_replace($patch[0], $patch[1], $replacedString);
