@@ -1,5 +1,5 @@
 <?php
-/* PHPSyncer v0.1.2 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
+/* PHPSyncer v0.2.0 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
 
 require_once "PHPSyncer.class.php";
 
@@ -10,7 +10,7 @@ try
 {
 	$startingTime = microtime();
 
-	$sync = new PHPSyncer('/if\s*\(\s*function_exists\(\'magicFunction\'\)\s*\)\s*\{/', new RecursiveDirectoryIterator($source), new RecursiveDirectoryIterator($target));
+	$sync = new PHPSyncer('/if\s*\(\s*function_exists\(\'magicFunction\'\)\s*\)\s*/', new RecursiveDirectoryIterator($source), new RecursiveDirectoryIterator($target));
 
 	echo "<p>Generating map...</p>";
 

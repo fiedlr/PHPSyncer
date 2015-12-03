@@ -1,5 +1,5 @@
 <?php
-/* PHPSyncer v0.1.2 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
+/* PHPSyncer v0.2.0 <github.com/fiedlr/PHPSyncer> | (c) 2015 Adam Fiedler | @license <opensource.org/licenses/MIT> */
 
 class PHPSyncer
 {
@@ -23,11 +23,10 @@ class PHPSyncer
 
 	private function loop(RecursiveDirectoryIterator $src)
 	{
-		$data = array();
-
 		$iterator = new RecursiveIteratorIterator($src);
 
 		// Loop through files
+		$data = array();
 		foreach ($iterator as $filePath => $file)
 		{
 			if (!in_array($file->getFilename(), array(".", "..", ".DS_Store")))
@@ -81,15 +80,10 @@ class PHPSyncer
 		return $data;
 	}
 
-	public function extract($mapFile = null)
+	public function extract()
 	{
-		if ($mapFile !== null && !is_string($mapFile)) 
-		{
-			throw new Exception('$mapFile must be of type string.', 1);
-		}
-
-		// Extract data from a preprocessed map or from the files themselves
-		$this->map = (empty($mapFile) ? array_merge_recursive($this->loop($this->target), $this->loop($this->source)) : $this->decodeMap($mapFile));
+		// Extract matches and replacements from the project files
+		$this->map = array_merge_recursive($this->loop($this->target), $this->loop($this->source));
 
 		return $this;
 	}
@@ -102,6 +96,13 @@ class PHPSyncer
 		}
 
 		return $this->map;
+	}
+
+	public function setTarget(RecursiveDirectoryIterator $newTarget)
+	{
+		$this->target = $newTarget;
+		
+		return $this;
 	}
 
 	private function saveTo($file, $content)
@@ -130,15 +131,22 @@ class PHPSyncer
 		return json_decode(file_get_contents($mapFile), true);
 	}
 
-	public function apply()
+	public function apply($mapFile = null)
 	{
-		$result = array();
+		if ($mapFile !== null && !is_string($mapFile)) 
+		{
+			throw new Exception('$mapFile must be of type string.', 1);
+		}
+
+		// Apply the map or the map file onto target
+		$map = empty($mapFile) ? $this->map : $this->decodeMap($mapFile);
 
 		// Loop through what to replace and how
-		foreach ($this->map as $fileName => $file)
+		$result = array();
+		foreach ($map as $fileName => $file)
 		{
 			// Get contents 
-			$originalString = file_get_contents($this->target->key().$fileName);
+			$originalString = file_get_contents($this->target->getPath().'/'.$fileName);
 			$replacedString = $originalString;
 
 			// Replace each match in the file
@@ -148,7 +156,7 @@ class PHPSyncer
 			}
 
 			// Save results
-			$result[$fileName] = ($replacedString != $originalString ? $this->saveTo($this->target->key().$fileName, $replacedString) : -1);
+			$result[$fileName] = ($replacedString != $originalString ? $this->saveTo($this->target->getPath().'/'.$fileName, $replacedString) : -1);
 		}
 
 		return $result;
